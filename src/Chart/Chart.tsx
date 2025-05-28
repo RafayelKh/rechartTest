@@ -1,6 +1,6 @@
 import { CartesianGrid, LineChart, ResponsiveContainer, Line, Legend, Tooltip, XAxis, YAxis, Dot } from "recharts";
 
-import { calcAverage, calcStandardDeviation, calcZScore, convertBetweenAxes, getGradientOffset, normalize } from "../util";
+import { calcAverage, calcStandardDeviation, calcZScore, convertBetweenAxes, normalize } from "../util";
 import { useMemo } from "react";
 import type { Props as DotProps } from "recharts/types/shape/Dot";
 
@@ -51,15 +51,11 @@ export const Chart = () => {
   const min = useMemo(() => Math.min(...enrichedData.map(d => d.uv), ...enrichedData.map(d => d.pv)), [enrichedData]);
   const max = useMemo(() => Math.max(...enrichedData.map(d => d.uv), ...enrichedData.map(d => d.pv)), [enrichedData]);
 
-  // console.log(minUvZScore, maxUvZScore, minP vZScore, maxPvZScore);
-
   const uvZScoreLevel = useMemo(() => convertBetweenAxes(1, [minUvZScore, maxUvZScore], [min, max]), []);
   const pvZScoreLevel = useMemo(() => convertBetweenAxes(1, [minPvZScore, maxPvZScore], [min, max]), []);
 
   const off1 = useMemo(() => 1 - normalize(uvZScoreLevel, min, max), [enrichedData]);
   const off2 = useMemo(() => 1 - normalize(pvZScoreLevel, min, max), [enrichedData]);
-
-  // console.log(uvZScoreLevel, off1);
 
   return (
     <>
@@ -83,7 +79,6 @@ export const Chart = () => {
           <Legend />
           <Line type="monotone" dataKey="uv" stroke="url(#splitColor)" strokeWidth={3} dot={(e) => customDot({ ...e, zScoreNormalized: off1, min, max })} yAxisId="left" />
           <Line type="monotone" dataKey="pv" stroke="url(#splitColor2)" strokeWidth={3} dot={(e) => customDot({ ...e, zScoreNormalized: off1, min, max })} yAxisId="left" />
-          {/* <Line type="monotone" dataKey="uvZ" stroke="green" dot={{ fill: "#82ca9d" }} yAxisId="right" /> */}
           <defs>
             <linearGradient id="splitColor" x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset={off1} stopColor="#ff0000" />
